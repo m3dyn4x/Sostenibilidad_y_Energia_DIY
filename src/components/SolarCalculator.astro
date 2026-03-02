@@ -1,0 +1,76 @@
+<section class="p-6 bg-white rounded-xl shadow-lg border border-slate-100 max-w-2xl mx-auto my-10">
+  <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Calculadora de Autoconsumo Solar 2026</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div>
+      <label class="block text-sm font-medium text-slate-600 mb-1">Consumo Anual (kWh)</label>
+      <input type="number" id="consumo" placeholder="Ej: 3500" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-yellow-500 outline-none" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-600 mb-1">Horas Sol Pico (HSP)</label>
+      <input type="number" id="hsp" step="0.1" placeholder="Ej: 4.5" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-yellow-500 outline-none" />
+    </div>
+  </div>
+
+  <button id="calcBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-md transition-colors duration-200 mb-8">
+    Calcular Amortización
+  </button>
+
+  <div id="results" class="hidden grid grid-cols-2 gap-4 border-t pt-6 bg-slate-50 p-4 rounded-lg">
+    <div class="text-center">
+      <span class="block text-xs uppercase text-slate-500 font-bold">Paneles Necesarios</span>
+      <span id="resPaneles" class="text-2xl font-black text-slate-800">-</span>
+    </div>
+    <div class="text-center">
+      <span class="block text-xs uppercase text-slate-500 font-bold">Potencia (kWp)</span>
+      <span id="resPotencia" class="text-2xl font-black text-slate-800">-</span>
+    </div>
+    <div class="text-center">
+      <span class="block text-xs uppercase text-slate-500 font-bold">Inversión Est.</span>
+      <span id="resCoste" class="text-2xl font-black text-green-600">-</span>
+    </div>
+    <div class="text-center">
+      <span class="block text-xs uppercase text-slate-500 font-bold">Amortización</span>
+      <span id="resTiempo" class="text-2xl font-black text-blue-600">-</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const btn = document.getElementById('calcBtn');
+  btn?.addEventListener('click', () => {
+    const consumoInput = document.getElementById('consumo') as HTMLInputElement | null;
+    const hspInput = document.getElementById('hsp') as HTMLInputElement | null;
+
+    if (!consumoInput || !hspInput) return; // seguridad extra
+
+    const consumo = parseFloat(consumoInput.value);
+    const hsp = parseFloat(hspInput.value);
+
+    if (consumo > 0 && hsp > 0) {
+      const PERDIDAS = 0.15;
+      const POTENCIA_PANEL = 450; // Watts
+      const PRECIO_KWP = 1500; // Euros
+
+      const potenciaKw = consumo / (hsp * 365 * (1 - PERDIDAS));
+      const numPaneles = Math.ceil((potenciaKw * 1000) / POTENCIA_PANEL);
+      const coste = potenciaKw * PRECIO_KWP;
+      const ahorroAnual = consumo * 0.22; // Media precio luz 2026
+      const años = (coste / ahorroAnual).toFixed(1);
+
+      const resPaneles = document.getElementById('resPaneles');
+      const resPotencia = document.getElementById('resPotencia');
+      const resCoste = document.getElementById('resCoste');
+      const resTiempo = document.getElementById('resTiempo');
+      const resultsDiv = document.getElementById('results');
+
+      if (resPaneles) resPaneles.innerText = numPaneles.toString();
+      if (resPotencia) resPotencia.innerText = potenciaKw.toFixed(2);
+      if (resCoste) resCoste.innerText = `${Math.round(coste)}€`;
+      if (resTiempo) resTiempo.innerText = `${años} años`;
+      if (resultsDiv) resultsDiv.classList.remove('hidden');
+    } else {
+      alert("Por favor, introduce valores válidos.");
+    }
+  });
+</script>
