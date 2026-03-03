@@ -1,0 +1,124 @@
+/* ============================================
+   ESTILOS GLOBALES - SITIO DE ENERGÍA SOLAR
+   ============================================
+   Este archivo contiene los estilos Tailwind base,
+   custom directives y variables CSS globales
+   para el sitio de Sostenibilidad y Energía DIY.
+   
+   NO EDITES AQUÍ - usa Tailwind classes en los componentes.
+*/
+
+@import "tailwindcss";
+
+/* Variables CSS personalizadas */
+:root {
+  --color-solar-primary: #f97316; /* Naranja solar */
+  --color-solar-accent: #f59e0b; /* Ámbar */
+  --color-dark: #1f2937;
+  --color-light: #f9fafb;
+  --color-border: #e5e7eb;
+}
+
+/* Estilos base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-gray-900 antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Tipografía de encabezados */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold text-gray-900;
+}
+
+h1 {
+  @apply text-4xl md:text-5xl;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl;
+}
+
+h3 {
+  @apply text-2xl md:text-3xl;
+}
+
+/* Enlaces por defecto */
+a {
+  @apply text-amber-500 hover:text-amber-600 underline transition-colors;
+}
+
+/* Código inline */
+code {
+  @apply bg-gray-100 px-2 py-1 rounded font-mono text-sm;
+}
+
+/* Bloques de código */
+pre {
+  @apply bg-gray-900 text-white p-4 rounded-lg overflow-x-auto;
+}
+
+/* Inputs y formularios */
+input,
+textarea,
+select {
+  @apply border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all;
+}
+
+button:not([class]) {
+  @apply bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600 transition-colors font-medium;
+}
+
+/* Tablas */
+table {
+  @apply border-collapse w-full;
+}
+
+th {
+  @apply bg-gray-100 border border-gray-300 px-4 py-2 text-left font-semibold;
+}
+
+td {
+  @apply border border-gray-300 px-4 py-2;
+}
+
+/* Componente: Card */
+.card {
+  @apply bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6;
+}
+
+/* Componente: Container principal */
+.container-solar {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Componente: Botones solares */
+.btn-primary {
+  @apply bg-amber-500 text-white px-6 py-3 rounded-lg hover:bg-amber-600 transition-colors font-semibold;
+}
+
+.btn-secondary {
+  @apply border-2 border-amber-500 text-amber-500 px-6 py-3 rounded-lg hover:bg-amber-50 transition-colors font-semibold;
+}
+
+.btn-ghost {
+  @apply text-amber-600 hover:text-amber-700 font-semibold underline;
+}
+
+/* Dark mode (opcional - agregar si fuese necesario) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-dark: #f9fafb;
+    --color-light: #1f2937;
+  }
+}

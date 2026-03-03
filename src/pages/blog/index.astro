@@ -1,0 +1,188 @@
+---
+/*
+  ================================================
+  ÍNDICE DE BLOG
+  ================================================
+  
+  Ruta: /blog/index.astro
+  
+  Características:
+  - Lista todos los artículos del blog
+  - Ordena por fecha (más recientes primero)
+  - Destaca artículos "featured"
+  - Filtra por categoría
+  - Meta tags SEO para la página de blog
+  
+  ================================================
+*/
+
+import { getCollection } from 'astro:content';
+import MainLayout from '@layouts/MainLayout.astro';
+
+// Obten todos los artículos del blog
+const allPosts = await getCollection('blog');
+
+// Ordena por fecha (más recientes primero)
+const sortedPosts = allPosts.sort((a, b) => 
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
+
+// Categorías para filtrado
+const categories = [
+  { id: 'balcon', label: '🏠 Kit Balcón', icon: '🏠' },
+  { id: 'off-grid', label: '🏔️ Off-Grid', icon: '🏔️' },
+  { id: 'bombeo', label: '🌾 Bombeo', icon: '🌾' },
+  { id: 'subsidios', label: '💰 Subsidios', icon: '💰' },
+  { id: 'climatizacion', label: '❄️ Climatización', icon: '❄️' },
+];
+
+// Obtén artículos destacados
+const featuredPosts = sortedPosts.filter(post => post.data.featured);
+const regularPosts = sortedPosts.filter(post => !post.data.featured);
+---
+
+<MainLayout 
+  title="Blog"
+  description="Guías, tutoriales y recursos sobre energía solar, autoconsumo y sostenibilidad energética.">
+  
+  <!-- Breadcrumbs -->
+  <div class="mb-8 text-sm">
+    <a href="/" class="text-amber-500 hover:underline">Inicio</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-700">Blog</span>
+  </div>
+
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Blog de Energía Solar</h1>
+    <p class="text-xl text-gray-600 max-w-2xl">
+      Guías prácticas, tutoriales y análisis sobre autoconsumo solar, subsidios y sostenibilidad energética.
+    </p>
+  </div>
+
+  <!-- Artículos destacados -->
+  {featuredPosts.length > 0 && (
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">Artículos Destacados</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        {featuredPosts.map((post) => (
+          <article class="card hover:shadow-xl transition-shadow">
+            {post.data.image && (
+              <img
+                src={post.data.image}
+                alt={post.data.title}
+                class="w-full h-48 object-cover rounded-lg mb-4"
+              />
+            )}
+            
+            <div class="flex gap-2 mb-3">
+              <span class="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-medium">
+                {post.data.category}
+              </span>
+              {post.data.featured && (
+                <span class="inline-block bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  ⭐ Destacado
+                </span>
+              )}
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2 text-gray-900">
+              <a href={`/blog/${post.slug}`} class="hover:text-amber-600 transition-colors">
+                {post.data.title}
+              </a>
+            </h3>
+            
+            <p class="text-gray-600 text-sm mb-4">
+              {post.data.description}
+            </p>
+            
+            <div class="flex justify-between items-center text-xs text-gray-500">
+              <span>{post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span>Por {post.data.author}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Separador -->
+  {featuredPosts.length > 0 && <hr class="my-12 border-gray-200" />}
+
+  <!-- Sección: Últimos artículos -->
+  <section>
+    <h2 class="text-2xl font-bold mb-6">
+      {featuredPosts.length > 0 ? 'Últimos Artículos' : 'Artículos Recientes'}
+    </h2>
+
+    <!-- Grid de artículos -->
+    <div class="space-y-6">
+      {regularPosts.map((post) => (
+        <article class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+          <div class="flex flex-col md:flex-row gap-6">
+            {post.data.image && (
+              <img
+                src={post.data.image}
+                alt={post.data.title}
+                class="w-full md:w-48 h-32 object-cover rounded-lg flex-shrink-0"
+              />
+            )}
+            
+            <div class="flex-1">
+              <!-- Categoría y fecha -->
+              <div class="flex gap-3 items-center mb-2 flex-wrap">
+                <span class="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                  {post.data.category}
+                </span>
+                <span class="text-xs text-gray-500">
+                  {post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </span>
+              </div>
+              
+              <!-- Título -->
+              <h3 class="text-xl font-bold mb-2 text-gray-900">
+                <a href={`/blog/${post.slug}`} class="hover:text-amber-600 transition-colors">
+                  {post.data.title}
+                </a>
+              </h3>
+              
+              <!-- Descripción -->
+              <p class="text-gray-600 text-sm mb-4">
+                {post.data.description}
+              </p>
+              
+              <!-- Footer -->
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">Por {post.data.author}</span>
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="text-amber-600 hover:text-amber-700 font-medium text-sm"
+                >
+                  Leer más →
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Sin artículos -->
+    {sortedPosts.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-600 text-lg">
+          Aún no hay artículos. ¡Vuelve pronto!
+        </p>
+      </div>
+    )}
+  </section>
+
+  <!-- CTA removed: newsletter form disabled per user request -->
+  <section class="mt-16 bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-12 text-center text-white">
+    <h2 class="text-2xl md:text-3xl font-bold mb-4">No te pierdas nuevos artículos</h2>
+    <p class="text-lg mb-6 opacity-90">
+      Consulta nuevas guías en nuestro <a href="/blog" class="underline font-semibold">blog</a> o sigue el feed.
+    </p>
+    <a href="/blog" class="inline-block bg-white text-amber-600 px-6 py-3 rounded font-bold hover:bg-gray-100 transition-colors">Ir al blog</a>
+  </section>
+</MainLayout>

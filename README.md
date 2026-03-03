@@ -41,3 +41,20 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## ⚙️ Environment variables (GA4 & AdSense)
+
+Create a `.env` file in the project root (you can copy `.env.example`) and set the following values to enable analytics and AdSense placeholders in the layout:
+
+```env
+# Google Analytics (GA4)
+PUBLIC_GA_ID=G-XXXXXXXXXX
+
+# Google AdSense client id
+PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX
+```
+
+Notes:
+- The site will only inject the GA4 and AdSense scripts when these variables are present.
+- For local testing you can set a test `PUBLIC_ADSENSE_CLIENT` and inspect that the script tag appears in the page head.
+- Do not commit your real keys to a public repo; keep `.env` out of git via `.gitignore`.

@@ -1,0 +1,61 @@
+---
+/*
+  ================================================
+  PÁGINA DINÁMICA DE ARTÍCULOS
+  ================================================
+  
+  Ruta: /blog/[slug].astro
+  
+  Esta página renderiza cada artículo del blog
+  basado en su slug (ej: /blog/kit-solar-balcon-2026)
+  
+  Características:
+  - Usa BlogLayout para estilos consistentes
+  - Extrae metadata del frontmatter del artículo
+  - Genera breadcrumbs y meta tags
+  - Calcula tiempo de lectura automáticamente
+  
+  ================================================
+*/
+
+import { getCollection } from 'astro:content';
+import BlogLayout from '@layouts/BlogLayout.astro';
+import { estimateReadingTime } from '@utils/seo';
+
+// Genera rutas estáticas para cada artículo
+export async function getStaticPaths() {
+  const blogPosts = await getCollection('blog');
+  
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+// Props ingresadas por Astro (post y slug)
+interface Props {
+  post: any; // Astro CollectionEntry<'blog'>
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Calcula tiempo de lectura
+const readingTime = estimateReadingTime(JSON.stringify(post.body));
+
+// Prepara props para el layout
+const layoutProps = {
+  title: post.data.title,
+  description: post.data.description,
+  author: post.data.author,
+  pubDate: post.data.pubDate,
+  updatedDate: post.data.updatedDate,
+  image: post.data.image,
+  category: post.data.category,
+  readingTime,
+};
+---
+
+<BlogLayout {...layoutProps}>
+  <Content />
+</BlogLayout>

@@ -1,0 +1,324 @@
+---
+/*
+  ================================================
+  CALCULADORA SOLAR - COMPONENTE INTERACTIVO
+  ================================================
+  
+  Componente Astro (con JavaScript cliente) que proporciona
+  la interfaz interactiva para la calculadora de autoconsumo solar.
+  
+  El componente:
+  1. Renderiza formulario con inputs
+  2. Llama a la función calculateSolarAutoconsumption
+  3. Muestra resultados en tiempo real
+  
+  USO:
+  ---
+  import SolarCalculator from "@components/Calculators/SolarCalculator.astro";
+  ---
+  
+  <SolarCalculator />
+  
+  ================================================
+*/
+
+import { calculateSolarAutoconsumption, getHorasSolPorRegion } from '@utils/calculators/solarAutoconsumption';
+---
+
+<div id="solar-calculator" class="w-full bg-white rounded-lg border border-gray-200 shadow-lg p-6 md:p-8">
+  <h2 class="text-2xl font-bold text-gray-900 mb-2">Calculadora de Autoconsumo Solar</h2>
+  <p class="text-gray-600 mb-6">
+    Descubre cuántos paneles solares necesitas y cuánto ahorrarás en tu factura de luz.
+  </p>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- COLUMNA IZQUIERDA: Formulario -->
+    <div>
+      <form id="solar-form" class="space-y-6">
+        <!-- Consumo anual -->
+        <div>
+          <label for="consumo" class="block text-sm font-medium text-gray-700 mb-2">
+            Consumo anual (kWh/año)
+          </label>
+          <input
+            type="number"
+            id="consumo"
+            name="consumo"
+            value="5000"
+            min="100"
+            max="50000"
+            step="100"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          />
+          <p class="text-xs text-gray-500 mt-1">Promedio español: ~4,000-5,000 kWh</p>
+          
+          <!-- Slider visual -->
+          <input
+            type="range"
+            id="consumo-slider"
+            name="consumo-slider"
+            value="5000"
+            min="100"
+            max="50000"
+            step="100"
+            class="w-full mt-3 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+          />
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span>100 kWh</span>
+            <span>50,000 kWh</span>
+          </div>
+        </div>
+
+        <!-- Región / Horas de sol -->
+        <div>
+          <label for="region" class="block text-sm font-medium text-gray-700 mb-2">
+            Región (o horas de sol)
+          </label>
+          <select id="region" name="region" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            <option value="">-- Selecciona tu región --</option>
+            <option value="Andalucía">Andalucía (5.0 h/día)</option>
+            <option value="Cataluña">Cataluña (4.5 h/día)</option>
+            <option value="Madrid">Madrid (4.5 h/día)</option>
+            <option value="Valencia">Valencia (4.8 h/día)</option>
+            <option value="Murcia">Murcia (5.0 h/día)</option>
+            <option value="Extremadura">Extremadura (5.0 h/día)</option>
+            <option value="Castilla y León">Castilla y León (4.2 h/día)</option>
+            <option value="Castilla-La Mancha">Castilla-La Mancha (4.8 h/día)</option>
+            <option value="Aragón">Aragón (4.5 h/día)</option>
+            <option value="Galicia">Galicia (3.5 h/día)</option>
+            <option value="Asturias">Asturias (3.5 h/día)</option>
+            <option value="Cantabria">Cantabria (3.3 h/día)</option>
+            <option value="País Vasco">País Vasco (3.5 h/día)</option>
+            <option value="Navarra">Navarra (4.2 h/día)</option>
+            <option value="La Rioja">La Rioja (4.3 h/día)</option>
+            <option value="Baleares">Baleares (5.0 h/día)</option>
+            <option value="Canarias">Canarias (5.2 h/día)</option>
+          </select>
+        </div>
+
+        <!-- Horas de sol manual -->
+        <div>
+          <label for="horas-sol" class="block text-sm font-medium text-gray-700 mb-2">
+            Horas sol equivalentes (h/día)
+          </label>
+          <input
+            type="number"
+            id="horas-sol"
+            name="horas-sol"
+            value="4.5"
+            min="2"
+            max="7"
+            step="0.1"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+          />
+        </div>
+
+        <!-- Orientación -->
+        <div>
+          <label for="orientacion" class="block text-sm font-medium text-gray-700 mb-2">
+            Orientación de los paneles
+          </label>
+          <select id="orientacion" name="orientacion" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+            <option value="sur">Sur (100% eficiencia)</option>
+            <option value="sureste">Sureste (90%)</option>
+            <option value="suroeste">Suroeste (90%)</option>
+            <option value="este">Este (85%)</option>
+            <option value="oeste">Oeste (85%)</option>
+          </select>
+        </div>
+
+        <!-- Botón de cálculo -->
+        <button
+          type="submit"
+          class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg hover:bg-amber-600 transition-colors"
+        >
+          Calcular
+        </button>
+      </form>
+    </div>
+
+    <!-- COLUMNA DERECHA: Resultados -->
+    <div id="results" class="hidden">
+      <div class="space-y-6">
+        <!-- Card: Paneles y potencia -->
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <h3 class="font-bold text-gray-900 mb-3">Instalación recomendada</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">Paneles solares:</span>
+              <span id="result-paneles" class="font-bold text-lg text-amber-600">0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">Potencia instalada:</span>
+              <span id="result-potencia" class="font-bold text-lg text-amber-600">0 kWp</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">Inversor:</span>
+              <span id="result-inversor" class="font-bold text-lg text-amber-600">0 kW</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Producción estimada -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 class="font-bold text-gray-900 mb-3">Producción anual</h3>
+          <div class="flex justify-between">
+            <span class="text-gray-700">Energía generada:</span>
+            <span id="result-energia" class="font-bold text-lg text-blue-600">0 kWh</span>
+          </div>
+        </div>
+
+        <!-- Card: Ahorro económico -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <h3 class="font-bold text-gray-900 mb-3">Ahorro anual</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-gray-700">Ahorro estimado:</span>
+              <span id="result-ahorro" class="font-bold text-lg text-green-600">0 €</span>
+            </div>
+            <p class="text-xs text-gray-600 mt-2">*Basado en tarifa media 0,18 €/kWh</p>
+          </div>
+        </div>
+
+        <!-- Card: Rentabilidad -->
+        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <h3 class="font-bold text-gray-900 mb-3">Rentabilidad</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">Coste total instalación:</span>
+              <span id="result-costo-total" class="font-bold text-purple-600">0 €</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">Amortización:</span>
+              <span id="result-amortizacion" class="font-bold text-purple-600">0 años</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-700">ROI anual:</span>
+              <span id="result-roi" class="font-bold text-purple-600">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aviso importante -->
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <p class="text-xs text-gray-700">
+            <strong>⚠️ Nota:</strong> Estos son estimaciones educativas. Para un presupuesto exacto, consulta con instaladores locales.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sincronizar slider con input
+  const consumoInput = document.getElementById('consumo') as HTMLInputElement;
+  const consumoSlider = document.getElementById('consumo-slider') as HTMLInputElement;
+  const regionSelect = document.getElementById('region') as HTMLSelectElement;
+  const horasSolInput = document.getElementById('horas-sol') as HTMLInputElement;
+  const form = document.getElementById('solar-form') as HTMLFormElement;
+  const resultsDiv = document.getElementById('results') as HTMLDivElement;
+
+  // Sincronizar inputs
+  consumoInput?.addEventListener('input', (e) => {
+    const value = (e.target as HTMLInputElement).value;
+    consumoSlider.value = value;
+  });
+
+  consumoSlider?.addEventListener('input', (e) => {
+    const value = (e.target as HTMLInputElement).value;
+    consumoInput.value = value;
+  });
+
+  // Al cambiar región, actualizar horas de sol
+  regionSelect?.addEventListener('change', (e) => {
+    const region = (e.target as HTMLSelectElement).value;
+    const horasMap: { [key: string]: number } = {
+      'Andalucía': 5.0,
+      'Cataluña': 4.5,
+      'Madrid': 4.5,
+      'Valencia': 4.8,
+      'Murcia': 5.0,
+      'Extremadura': 5.0,
+      'Castilla y León': 4.2,
+      'Castilla-La Mancha': 4.8,
+      'Aragón': 4.5,
+      'Galicia': 3.5,
+      'Asturias': 3.5,
+      'Cantabria': 3.3,
+      'País Vasco': 3.5,
+      'Navarra': 4.2,
+      'La Rioja': 4.3,
+      'Baleares': 5.0,
+      'Canarias': 5.2,
+    };
+    if (region && horasMap[region]) {
+      horasSolInput.value = horasMap[region].toString();
+    }
+  });
+
+  // Submit del formulario
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const consumo = parseFloat(consumoInput.value);
+    const horasSol = parseFloat(horasSolInput.value);
+    const orientacion = (document.getElementById('orientacion') as HTMLSelectElement).value;
+
+    // Llamar a la función del servidor (Astro endpoint)
+    try {
+      const response = await fetch('/api/calculate-solar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          consumoAnual: consumo,
+          horasSol: horasSol,
+          orientacion: orientacion,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Mostrar resultados
+        document.getElementById('result-paneles')!.textContent = result.data.paneles.toLocaleString('es-ES');
+        document.getElementById('result-potencia')!.textContent = result.data.potenciaKwp.toFixed(2) + ' kWp';
+        document.getElementById('result-inversor')!.textContent = result.data.potenciaInversor.toFixed(2) + ' kW';
+        document.getElementById('result-energia')!.textContent = result.data.energiaAnualEstimada.toLocaleString('es-ES') + ' kWh';
+        document.getElementById('result-ahorro')!.textContent = result.data.ahorroAnual.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+        document.getElementById('result-costo-total')!.textContent = result.data.costoEstimado.total.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+        document.getElementById('result-amortizacion')!.textContent = result.data.amortizacion.toFixed(1) + ' años';
+        document.getElementById('result-roi')!.textContent = result.data.roi.toFixed(1) + '%';
+
+        // Mostrar la sección de resultados
+        resultsDiv.classList.remove('hidden');
+        
+        // Scroll suave a resultados
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } catch (error) {
+      console.error('Error en cálculo:', error);
+      alert('Hubo un error en el cálculo. Intenta de nuevo.');
+    }
+  });
+</script>
+
+<style>
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #f59e0b;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #f59e0b;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+  }
+</style>

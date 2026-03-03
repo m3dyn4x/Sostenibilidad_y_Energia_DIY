@@ -1,0 +1,198 @@
+---
+/*
+  ================================================
+  BLOG LAYOUT - TEMPLATE PARA ARTÍCULOS
+  ================================================
+  
+  Layout especializado para artículos del blog con:
+  - Metadata de artículo (fecha, autor, etc.)
+  - Tabla de contenidos
+  - Breadcrumbs
+  - Meta tags locales
+  
+  USO:
+  ---
+  import BlogLayout from "@layouts/BlogLayout.astro";
+  ---
+  
+  <BlogLayout 
+    title="Mi artículo"
+    {...metadata}>
+    <div>Mi contenido MDX aquí</div>
+  </BlogLayout>
+  
+  ================================================
+*/
+
+import MainLayout from './MainLayout.astro';
+import { generateArticleSchema } from '@utils/seo';
+import AdSlot from '@components/AdSlot.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  author?: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  image?: string;
+  category?: string;
+  readingTime?: number;
+}
+
+const {
+  title,
+  description,
+  author = 'Admin',
+  pubDate,
+  updatedDate,
+  image = 'https://via.placeholder.com/1200x630',
+  category = 'general',
+  readingTime = 5,
+} = Astro.props;
+
+// Schema JSON-LD para el artículo
+const schema = generateArticleSchema({
+  title,
+  description,
+  image,
+  author,
+  publishedDate: pubDate,
+  url: Astro.url.href,
+});
+---
+
+<MainLayout title={title} description={description} image={image}>
+  <!-- Schema JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  
+  <!-- Breadcrumbs -->
+  <div class="mb-8 text-sm">
+    <a href="/" class="text-amber-500 hover:underline">Inicio</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <a href="/blog" class="text-amber-500 hover:underline">Blog</a>
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-700">{title}</span>
+  </div>
+
+  <!-- Article header -->
+  <article class="max-w-3xl mx-auto">
+    <!-- Categoría -->
+    <div class="mb-4">
+      <span class="inline-block bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-medium uppercase">
+        {category}
+      </span>
+    </div>
+
+    <!-- Título e imagen -->
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900">{title}</h1>
+    
+    <!-- Metadata del artículo -->
+    <div class="flex flex-col md:flex-row gap-4 md:gap-8 text-sm text-gray-600 mb-8 pb-8 border-b border-gray-200">
+      <div class="flex items-center gap-2">
+        <span class="font-medium">{author}</span>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <span>{pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        {updatedDate && (
+          <>
+            <span class="text-gray-400">•</span>
+            <span>Actualizado: {updatedDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </>
+        )}
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <span>⏱ {readingTime} min de lectura</span>
+      </div>
+    </div>
+
+    <!-- Imagen destacada -->
+    {image && (
+      <img
+        src={image}
+        alt={title}
+        class="w-full h-96 object-cover rounded-lg mb-8"
+      />
+    )}
+
+    <!-- Descripción -->
+    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+      {description}
+    </p>
+
+    <!-- Ad slot after description -->
+    <div class="mb-8">
+      <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_DEFAULT ?? '1234567890'} class="my-6" />
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="prose prose-lg max-w-none mb-16">
+      <!-- Aquí va el contenido del slot -->
+      <slot />
+    </div>
+
+    <!-- CTA / Siguiente artículo (newsletter removed) -->
+    <div class="border-t border-gray-200 pt-8 mt-8">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-8 text-center">
+        <h3 class="font-bold text-xl mb-2">¿Quieres aprender más sobre energía solar?</h3>
+        <p class="text-gray-700 mb-4">
+          Consulta más guías en nuestro <a href="/blog" class="font-medium underline">blog</a> o sigue el feed para actualizaciones.
+        </p>
+        <a href="/blog" class="inline-block bg-amber-500 text-white px-6 py-2 rounded font-medium hover:bg-amber-600">Ir al blog</a>
+      </div>
+    </div>
+  </article>
+</MainLayout>
+
+<style>
+  /* Estilos específicos para el contenido MDX */
+  :global(.prose h2) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  :global(.prose h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  :global(.prose p) {
+    margin-bottom: 1rem;
+    line-height: 1.625;
+  }
+  
+  :global(.prose ul, .prose ol) {
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+  }
+  
+  :global(.prose li) {
+    margin-bottom: 0.5rem;
+  }
+  
+  :global(.prose blockquote) {
+    border-left: 4px solid #f59e0b;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #374151;
+    margin: 1rem 0;
+  }
+  
+  :global(.prose code) {
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+  }
+  
+  :global(.prose pre) {
+    background-color: #111827;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+</style>
