@@ -4,7 +4,7 @@ description: "Guía práctica para instalar sistemas de riego solar en fincas y 
 pubDate: 2026-03-02
 updatedDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&h=630&fit=crop"
+image: "/images/photo-1574943320219-553eb213f72d"
 category: "bombeo"
 keywords: ["bombeo solar", "riego solar", "agricultura solar", "bomba sumergible"]
 featured: true

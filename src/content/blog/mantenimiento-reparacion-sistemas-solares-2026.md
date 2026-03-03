@@ -3,7 +3,7 @@ title: "Mantenimiento y Reparación de Sistemas Solares (2026)"
 description: "Guía práctica para el mantenimiento preventivo y la reparación de instalaciones solares: limpieza, monitoreo, baterías e inversores."
 pubDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?w=1200&h=630&fit=crop"
+image: "/images/photo-1509395176047-4a66953fd231"
 category: "mantenimiento"
 keywords: ["mantenimiento solar","limpieza paneles","reparación inversor","cuidado baterías"]
 featured: false

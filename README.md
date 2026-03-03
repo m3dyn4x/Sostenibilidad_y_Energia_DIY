@@ -54,6 +54,29 @@ PUBLIC_GA_ID=G-XXXXXXXXXX
 PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX
 ```
 
+### Imágenes en contenido
+
+Los artículos usan enlaces directos a Unsplash. Si alguna imagen no carga (por bloqueo de hotlink o problemas de red) el sitio sustituirá la imagen por un píxel transparente. Para mayor estabilidad:
+
+1. Descarga las imágenes que necesites y ponlas en `public/images/`.
+2. Actualiza el frontmatter `image:` de cada artículo con la ruta relativa, por ejemplo:
+   ```yaml
+   image: "/images/kit-balcon.jpg"
+   ```
+3. Asegúrate de borrar caché de navegador cuando pruebes.
+
+Esto evita dependencias de terceros en producción y mejora la velocidad de carga.
+
+Para automatizar la descarga de las imágenes referenciadas en los posts, ejecuta:
+
+```bash
+npm run fetch-images
+```
+
+El script guardará los ficheros en `public/images/` y modificará el frontmatter
+para utilizar esas rutas locales. Úsalo cada vez que agregues o cambies una URL
+`image:` en los artículos.
+
 Notes:
 - The site will only inject the GA4 and AdSense scripts when these variables are present.
 - For local testing you can set a test `PUBLIC_ADSENSE_CLIENT` and inspect that the script tag appears in the page head.
