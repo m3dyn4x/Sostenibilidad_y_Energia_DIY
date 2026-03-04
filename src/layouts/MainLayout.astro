@@ -138,10 +138,9 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
       gtag('js', new Date());
       gtag('config', 'G-KSL8JPYYE7');
     </script>
-    <!-- AdSense - activa estableciendo `PUBLIC_ADSENSE_CLIENT` en .env -->
-    {ADSENSE_CLIENT && (
-      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`} crossorigin="anonymous"></script>
-    )}
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6773309674115541"
+     crossorigin="anonymous"></script>
     
     <title>{siteTitle}</title>
   </head>
