@@ -125,15 +125,19 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
     <!-- Google Analytics (GA4) - activa estableciendo `PUBLIC_GA_ID` en .env -->
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KSL8JPYYE7"></script>
-    <script lang="ts" is:inline>
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      function gtag(...args: any[]): void {
-        (window as any).dataLayer.push(args);
+    <script lang="ts">
+      declare global {
+        interface Window {
+          dataLayer: any[];
+          gtag: (...args: any[]) => void;
+        }
       }
+      
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args: any[]) { window.dataLayer.push(args); }
       gtag('js', new Date());
       gtag('config', 'G-KSL8JPYYE7');
     </script>
-
     <!-- AdSense - activa estableciendo `PUBLIC_ADSENSE_CLIENT` en .env -->
     {ADSENSE_CLIENT && (
       <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`} crossorigin="anonymous"></script>
