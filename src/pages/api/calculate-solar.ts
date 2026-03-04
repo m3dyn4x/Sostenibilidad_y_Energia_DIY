@@ -9,7 +9,9 @@
   {
     "consumoAnual": 5000,
     "horasSol": 4.5,
-    "orientacion": "sur"
+    "precioKwh": 0.22,        // €/kWh tarifa eléctrica
+    "orientacion": "sur",   // opcional
+    "inclinacion": 25         // opcional
   }
   
   Devuelve:
@@ -20,6 +22,8 @@
   
   ================================================
 */
+
+export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { calculateSolarAutoconsumption, validateSolarInput } from '@utils/calculators/solarAutoconsumption';
@@ -68,7 +72,9 @@ export const POST: APIRoute = async ({ request }) => {
     const result = calculateSolarAutoconsumption({
       consumoAnual: input.consumoAnual,
       horasSol: input.horasSol,
+      precioKwh: input.precioKwh,
       orientacion: input.orientacion || 'sur',
+      inclinacion: input.inclinacion,
     });
 
     return new Response(

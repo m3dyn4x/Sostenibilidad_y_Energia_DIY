@@ -4,7 +4,7 @@ description: "Todo lo que necesitas saber sobre instalar paneles solares plug & 
 pubDate: 2026-03-01
 updatedDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://images.unsplash.com/photo-1574520494159-6f3ee00af35d?w=1200&h=630&fit=crop"
+image: "https://source.unsplash.com/1200x630/?balcony,solar"
 category: "balcon"
 keywords: ["kit solar balcón", "placas solares balcón", "autoconsumo piso", "plug and play solar"]
 featured: true

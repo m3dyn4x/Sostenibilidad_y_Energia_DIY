@@ -55,7 +55,7 @@ h3 {
 
 /* Enlaces por defecto */
 a {
-  @apply text-amber-500 hover:text-amber-600 underline transition-colors;
+  @apply hover:text-amber-600 transition-colors;
 }
 
 /* Código inline */

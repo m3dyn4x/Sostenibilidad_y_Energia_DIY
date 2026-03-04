@@ -83,9 +83,7 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
     {GA_ID && (
       <>
         <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script>
-          {`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${GA_ID}');`}
-        </script>
+        <script set:html={`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${GA_ID}');`}></script>
       </>
     )}
 
@@ -172,5 +170,15 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
         </div>
       </div>
     </footer>
+    <!-- Global image error handler: sustituye con un placeholder si falla la carga -->
+    <script>
+      document.addEventListener('error', function(e) {
+        const t = e.target as HTMLImageElement | null;
+        if (t && t.tagName === 'IMG' && !(t.dataset as any).fallback) {
+          (t.dataset as any).fallback = true;
+          t.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==';
+        }
+      }, true);
+    </script>
   </body>
 </html>

@@ -26,6 +26,7 @@
 export interface SolarAutoconsumptionInput {
   consumoAnual: number; // kWh/año
   horasSol: number; // Horas de sol promedio por día
+  precioKwh?: number; // €/kWh, tarifa eléctrica actual
   orientacion?: 'sur' | 'sureste' | 'suroeste' | 'este' | 'oeste';
   inclinacion?: number; // Grados (recomendado = latitud)
 }
@@ -56,6 +57,7 @@ export function calculateSolarAutoconsumption(
   const {
     consumoAnual,
     horasSol,
+    precioKwh = 0.18,
     orientacion = 'sur',
     inclinacion = 25,
   } = input;
@@ -106,8 +108,7 @@ export function calculateSolarAutoconsumption(
   const costoTotal = costosPaneles + costosInversor + costosInstalacion;
   
   // ========== AHORRO Y RENTABILIDAD ==========
-  // Precio medio del kWh en España (2026: ~0.18 EUR)
-  const precioKwh = 0.18;
+  // Precio del kWh aportado por usuario o tarifa por defecto
   const ahorroAnual = energiaAnualEstimada * precioKwh;
   
   // Amortización simple (sin considerar inflación)
@@ -179,6 +180,10 @@ export function validateSolarInput(input: any): { valid: boolean; errors: string
   
   if (!input.horasSol || input.horasSol < 2 || input.horasSol > 7) {
     errors.push('Horas de sol debe estar entre 2 y 7');
+  }
+  
+  if (input.precioKwh == null || input.precioKwh <= 0) {
+    errors.push('Precio del kWh debe ser un número positivo');
   }
   
   return {

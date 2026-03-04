@@ -3,7 +3,7 @@ title: "Energía Solar Portátil: Guía para Nómadas y Camping (2026)"
 description: "Todo sobre soluciones solares portátiles: paneles plegables, power stations, kits para campers y recomendaciones de uso."
 pubDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://images.unsplash.com/photo-1509395176047-7a66953fd231?w=1200&h=630&fit=crop"
+image: "https://source.unsplash.com/1200x630/?portable,solar,camping"
 category: "portátil"
 keywords: ["solar portátil","power station","camping solar","panel plegable"]
 featured: false
