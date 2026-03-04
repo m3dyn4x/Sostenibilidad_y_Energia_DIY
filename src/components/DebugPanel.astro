@@ -30,8 +30,10 @@
 
 <script>
   function toggleDebug() {
-    const panel = document.getElementById('debug-panel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    const panel = document.getElementById('debug-panel') as HTMLDivElement | null;
+    if (panel) {
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
   }
 
   function updateDebugInfo() {
@@ -39,9 +41,15 @@
     try {
       document.cookie = "testcookie=test; max-age=1";
       const cookiesEnabled = document.cookie.indexOf("testcookie") !== -1;
-      document.getElementById('cookies-enabled').textContent = cookiesEnabled ? '✅' : '❌';
+      const cookieEnabledElem = document.getElementById('cookies-enabled');
+      if (cookieEnabledElem) {
+        cookieEnabledElem.textContent = cookiesEnabled ? '✅' : '❌';
+      }
     } catch {
-      document.getElementById('cookies-enabled').textContent = '❌';
+      const cookieEnabledElem = document.getElementById('cookies-enabled');
+      if (cookieEnabledElem) {
+        cookieEnabledElem.textContent = '❌';
+      }
     }
 
     // Idioma actual desde cookie
@@ -54,14 +62,23 @@
         break;
       }
     }
-    document.getElementById('current-lang').textContent = currentLang;
+    const currentLangElem = document.getElementById('current-lang');
+    if (currentLangElem) {
+      currentLangElem.textContent = currentLang;
+    }
 
     // Idioma del navegador
     const browserLang = navigator.language || 'unknown';
-    document.getElementById('browser-lang').textContent = browserLang;
+    const browserLangElem = document.getElementById('browser-lang');
+    if (browserLangElem) {
+      browserLangElem.textContent = browserLang;
+    }
 
     // Todas las cookies
-    document.getElementById('all-cookies').textContent = document.cookie || 'none';
+    const allCookiesElem = document.getElementById('all-cookies');
+    if (allCookiesElem) {
+      allCookiesElem.textContent = document.cookie || 'none';
+    }
   }
 
   function testCookies() {

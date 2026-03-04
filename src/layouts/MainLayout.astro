@@ -123,12 +123,16 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
     <!-- Google Analytics (GA4) - activa estableciendo `PUBLIC_GA_ID` en .env -->
-    {GA_ID && (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script set:html={`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', '${GA_ID}');`}></script>
-      </>
-    )}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHHGGMNQ70"></script>
+    <script lang="ts" is:inline>
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      function gtag(...args: any[]): void {
+        (window as any).dataLayer.push(args);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-LHHGGMNQ70');
+    </script>
 
     <!-- AdSense - activa estableciendo `PUBLIC_ADSENSE_CLIENT` en .env -->
     {ADSENSE_CLIENT && (
@@ -232,21 +236,21 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
 
     <!-- Global initialization script for theme and language selectors -->
     <script>
-      function getCookie(name) {
+      function getCookie(name: string): string | null {
         const value = ';' + document.cookie;
         const parts = value.split('; ' + name + '=');
         if (parts.length === 2) {
-          return parts.pop().split(';').shift();
+          return parts.pop()?.split(';').shift() ?? null;
         }
         return null;
       }
 
-      function setCookieClient(name, value) {
+      function setCookieClient(name: string, value: string): void {
         const maxAge = 60 * 60 * 24 * 365;
         document.cookie = name + '=' + value + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
       }
 
-      function applyTheme(theme) {
+      function applyTheme(theme: string): void {
         const html = document.documentElement;
         if (theme === 'dark') {
           html.classList.add('dark');
@@ -263,8 +267,8 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
       }
 
       // Initialize theme selector
-      function initThemeSelector() {
-        const selector = document.getElementById('theme-selector');
+      function initThemeSelector(): void {
+        const selector = document.getElementById('theme-selector') as HTMLSelectElement | null;
         if (!selector) {
           console.log('[Theme] Selector not found');
           return;
@@ -275,8 +279,8 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
         selector.value = savedTheme;
         console.log('[Theme] Selector value now:', selector.value);
 
-        selector.addEventListener('change', function(e) {
-          const newTheme = e.target.value;
+        selector.addEventListener('change', function(e: Event) {
+          const newTheme = (e.target as HTMLSelectElement).value;
           console.log('[Theme] Changed to:', newTheme);
           setCookieClient('sostenibilidad_theme', newTheme);
           applyTheme(newTheme);
@@ -288,8 +292,8 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
       }
 
       // Initialize language selector
-      function initLanguageSelector() {
-        const selector = document.getElementById('language-selector');
+      function initLanguageSelector(): void {
+        const selector = document.getElementById('language-selector') as HTMLSelectElement | null;
         if (!selector) {
           console.log('[Language] Selector not found');
           return;
@@ -300,8 +304,8 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
         selector.value = savedLang;
         console.log('[Language] Selector value now:', selector.value);
 
-        selector.addEventListener('change', function(e) {
-          const newLang = e.target.value;
+        selector.addEventListener('change', function(e: Event) {
+          const newLang = (e.target as HTMLSelectElement).value;
           console.log('[Language] Changed to:', newLang);
           setCookieClient('sostenibilidad_lang', newLang);
           setTimeout(() => {
@@ -311,7 +315,7 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
       }
 
       // Run on DOM ready
-      function initSelectors() {
+      function initSelectors(): void {
         console.log('[Init] Starting initialization...');
         initThemeSelector();
         initLanguageSelector();
