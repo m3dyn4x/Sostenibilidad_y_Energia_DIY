@@ -4,7 +4,7 @@ description: "Guía actualizada de deducción IRPF, bonificación IBI, fondos eu
 pubDate: 2026-03-02
 updatedDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://source.unsplash.com/1200x630/?solar,government,money"
+image: "/public/images/alexander-mils-lCPhGxs7pww-unsplash.jpg"
 category: "subsidios"
 keywords: ["deducción IRPF solar", "bonificación IBI", "subvenciones energía", "fondos next generation"]
 featured: true

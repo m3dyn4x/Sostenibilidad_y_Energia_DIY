@@ -4,7 +4,7 @@ description: "Combina paneles solares con bomba de calor por aerotermia para cal
 pubDate: 2026-03-02
 updatedDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://source.unsplash.com/1200x630/?solar,heat,panel"
+image: "/public/images/immo-wegmann-V2AMRkAUCnA-unsplash.jpg"
 category: "climatizacion"
 keywords: ["aerotermia solar", "bomba de calor", "climatización solar", "calefacción renovable"]
 featured: true

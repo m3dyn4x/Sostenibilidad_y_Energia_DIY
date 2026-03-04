@@ -4,7 +4,7 @@ description: "Guía completa para diseñar y construir un sistema fotovoltaico a
 pubDate: 2026-03-02
 updatedDate: 2026-03-03
 author: "Equipo Energía DIY"
-image: "https://source.unsplash.com/1200x630/?offgrid,solar"
+image: "/public/images/alex-bierwagen-Uuz7yti7SQA-unsplash.jpg"
 category: "off-grid"
 keywords: ["energía aislada", "sistema solar off-grid", "vivienda aislada", "baterías solares"]
 featured: true
