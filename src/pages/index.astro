@@ -3,42 +3,48 @@
   ================================================
   PÁGINA DE INICIO (HOME)
   ================================================
-  
+
   Homepage principal con:
   - Hero section
   - Resumen de subnichos
   - Calculadora solar principal
   - CTA para newsletter
-  
+
   ================================================
 */
 
 import MainLayout from '@layouts/MainLayout.astro';
 import SolarCalculator from '@components/SolarCalculator.astro';
+import { getLanguagePreference } from '../utils/cookies';
+import { getTranslations } from '../utils/i18n';
+
+// Detectar idioma actual (esto se ejecutará en el cliente)
+const currentLanguage = typeof window !== 'undefined' ? getLanguagePreference() : 'es';
+const translations = getTranslations(currentLanguage);
 ---
 
-<MainLayout 
+<MainLayout
   title="Sostenibilidad y Energía DIY"
   description="Guías, calculadoras y recursos sobre energía solar, autoconsumo y sostenibilidad energética. Aprende a ahorrar en tu factura de luz.">
-  
+
   <!-- HERO SECTION -->
   <section class="mb-16 md:mb-24 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-gradient-to-br from-solar-50 via-white to-blue-50 rounded-2xl">
     <div class="max-w-3xl mx-auto text-center">
       <div class="mb-6">
         <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent mb-4">
-          Energía Solar para Todos
+          {translations.home.title}
         </h1>
         <p class="text-xl md:text-2xl text-gray-700">
-          Aprende a instalar paneles solares, ahorra en tu factura y contribuye a un planeta más sostenible.
+          {translations.home.subtitle}
         </p>
       </div>
-      
+
       <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
         <a href="#subnichos" class="bg-amber-500 text-white px-6 py-3 rounded-lg hover:bg-amber-600 transition-colors font-semibold text-center decoration-none">
           Explorar Guías
         </a>
         <a href="#calculadora" class="btn-secondary text-center underline-none no-underline">
-          Calcular mi Ahorro
+          {translations.home.cta}
         </a>
       </div>
     </div>
@@ -47,9 +53,9 @@ import SolarCalculator from '@components/SolarCalculator.astro';
   <!-- CALCULADORA PRINCIPAL -->
   <section id="calculadora" class="mb-20 scroll-mt-8">
     <div class="mb-8">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-2">Calcula tu Sistema Solar</h2>
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-2">{translations.calculator.title}</h2>
       <p class="text-center text-gray-600 max-w-2xl mx-auto">
-        Descubre cuántos paneles necesitas, la potencia instalada y cuánto ahorrarás en tu factura de luz.
+        {translations.calculator.subtitle}
       </p>
     </div>
     <SolarCalculator />

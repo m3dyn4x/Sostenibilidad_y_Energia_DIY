@@ -1,0 +1,88 @@
+---
+// Componente de debug temporal para probar cookies e i18n
+---
+
+<div id="debug-panel" class="fixed bottom-4 right-4 bg-black text-white p-4 rounded-lg shadow-lg max-w-sm z-50" style="display: none;">
+  <div class="flex justify-between items-center mb-2">
+    <h3 class="text-sm font-bold">🐛 Debug Panel</h3>
+    <button onclick="toggleDebug()" class="text-gray-400 hover:text-white">×</button>
+  </div>
+  <div class="text-xs space-y-1">
+    <div>Cookies enabled: <span id="cookies-enabled">-</span></div>
+    <div>Current language: <span id="current-lang">-</span></div>
+    <div>Browser language: <span id="browser-lang">-</span></div>
+    <div>All cookies: <span id="all-cookies">-</span></div>
+  </div>
+  <div class="mt-2 space-x-2">
+    <button onclick="testCookies()" class="bg-blue-600 px-2 py-1 rounded text-xs">Test Cookies</button>
+    <button onclick="clearCookies()" class="bg-red-600 px-2 py-1 rounded text-xs">Clear</button>
+  </div>
+</div>
+
+<!-- Botón para mostrar/ocultar debug panel -->
+<button
+  onclick="toggleDebug()"
+  class="fixed bottom-4 left-4 bg-gray-800 text-white p-2 rounded-full shadow-lg z-50"
+  title="Toggle Debug Panel"
+>
+  🐛
+</button>
+
+<script>
+  function toggleDebug() {
+    const panel = document.getElementById('debug-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function updateDebugInfo() {
+    // Verificar si cookies están habilitadas
+    try {
+      document.cookie = "testcookie=test; max-age=1";
+      const cookiesEnabled = document.cookie.indexOf("testcookie") !== -1;
+      document.getElementById('cookies-enabled').textContent = cookiesEnabled ? '✅' : '❌';
+    } catch {
+      document.getElementById('cookies-enabled').textContent = '❌';
+    }
+
+    // Idioma actual desde cookie
+    const cookies = document.cookie.split(';');
+    let currentLang = 'es'; // default
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith('sostenibilidad_lang=')) {
+        currentLang = cookie.substring('sostenibilidad_lang='.length);
+        break;
+      }
+    }
+    document.getElementById('current-lang').textContent = currentLang;
+
+    // Idioma del navegador
+    const browserLang = navigator.language || 'unknown';
+    document.getElementById('browser-lang').textContent = browserLang;
+
+    // Todas las cookies
+    document.getElementById('all-cookies').textContent = document.cookie || 'none';
+  }
+
+  function testCookies() {
+    // Establecer cookie de test
+    document.cookie = "test_debug=working; path=/; max-age=60";
+    setTimeout(updateDebugInfo, 100);
+    alert('Cookie de test establecida. Revisa el panel.');
+  }
+
+  function clearCookies() {
+    // Limpiar cookies relacionadas
+    document.cookie = "sostenibilidad_lang=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "test_debug=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "testcookie=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    setTimeout(updateDebugInfo, 100);
+    alert('Cookies limpiadas.');
+  }
+
+  // Actualizar info al cargar
+  document.addEventListener('DOMContentLoaded', updateDebugInfo);
+
+  // Actualizar cada 2 segundos
+  setInterval(updateDebugInfo, 2000);
+</script>

@@ -1,0 +1,57 @@
+---
+import { getTranslations } from '../utils/i18n';
+
+interface Props {
+  currentLanguage?: 'es' | 'en';
+  className?: string;
+}
+
+const { currentLanguage = 'es', className = '' } = Astro.props;
+const translations = getTranslations(currentLanguage);
+---
+
+<div class={`theme-selector ${className}`}>
+  <select
+    id="theme-selector"
+    data-default-value="light"
+    class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 cursor-pointer min-w-[120px]"
+    aria-label={translations.theme.select}
+  >
+    <option value="light">☀️ {translations.theme.light}</option>
+    <option value="dark">🌙 {translations.theme.dark}</option>
+    <option value="auto">🖥️ {translations.theme.auto}</option>
+  </select>
+</div>
+
+<style>
+  .theme-selector select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    appearance: none;
+  }
+
+  .theme-selector select:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .theme-selector select:hover {
+    border-color: #9ca3af;
+  }
+
+  /* Dark mode adjustments */
+  .dark .theme-selector select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d1d5db' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  }
+
+  @media (max-width: 640px) {
+    .theme-selector select {
+      min-width: 100px;
+      padding: 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>

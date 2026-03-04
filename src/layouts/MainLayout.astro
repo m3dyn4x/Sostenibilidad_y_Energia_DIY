@@ -3,29 +3,34 @@
   ================================================
   MAIN LAYOUT - TEMPLATE BASE DE TODAS LAS PÁGINAS
   ================================================
-  
+
   Este layout proporciona:
   - Header con navegación
   - Footer
   - Meta tags (SEO)
   - Estilos globales
   - Estructura HTML base
-  
+  - Soporte para i18n y cookies
+
   USO:
   ---
   import MainLayout from "@layouts/MainLayout.astro";
   ---
-  
-  <MainLayout 
-    title="Mi página" 
+
+  <MainLayout
+    title="Mi página"
     description="Descripción">
     <div>Mi contenido aquí</div>
   </MainLayout>
-  
+
   ================================================
 */
 
 import '@styles/globals.css';
+import LanguageSelector from '@components/LanguageSelector.astro';
+import ThemeSelector from '@components/ThemeSelector.astro';
+import { getLanguagePreference } from '../utils/cookies';
+import { getTranslations } from '../utils/i18n';
 
 interface Props {
   title?: string;
@@ -41,6 +46,10 @@ const {
   noindex = false,
 } = Astro.props;
 
+// Detectar idioma actual desde cookies (solo en cliente)
+const currentLanguage = getLanguagePreference();
+const translations = getTranslations(currentLanguage);
+
 const siteTitle = title === 'Sostenibilidad y Energía DIY' ? title : `${title} | Sostenibilidad y Energía DIY`;
 const currentUrl = Astro.url.href;
 const GA_ID = import.meta.env.PUBLIC_GA_ID ?? null;
@@ -48,8 +57,42 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={currentLanguage}>
   <head>
+    <!-- Theme initialization script (must run ASAP) -->
+    <script is:inline>
+      (function() {
+        function getCookie(name) {
+          const value = ';' + document.cookie;
+          const parts = value.split('; ' + name + '=');
+          if (parts.length === 2) {
+            return parts.pop().split(';').shift();
+          }
+          return null;
+        }
+
+        function applyTheme(theme) {
+          const html = document.documentElement;
+          if (theme === 'dark') {
+            html.classList.add('dark');
+          } else if (theme === 'light') {
+            html.classList.remove('dark');
+          } else if (theme === 'auto') {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+              html.classList.add('dark');
+            } else {
+              html.classList.remove('dark');
+            }
+          }
+        }
+
+        // Get saved theme or default to 'light'
+        const savedTheme = getCookie('sostenibilidad_theme') || 'light';
+        applyTheme(savedTheme);
+      })();
+    </script>
+
     <!-- Meta tags base -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -103,19 +146,35 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
           <span class="text-2xl font-bold text-amber-500">☀️</span>
           <span class="font-bold text-lg text-gray-900">Energía DIY</span>
         </a>
-        
-        <ul class="hidden md:flex gap-6 text-sm font-medium">
-          <li><a href="/" class="text-gray-700 hover:text-amber-500">Inicio</a></li>
-          <li><a href="/#subnichos" class="text-gray-700 hover:text-amber-500">Subnichos</a></li>
-          <li><a href="/blog" class="text-gray-700 hover:text-amber-500">Blog</a></li>
-          <li><a href="/#calculadora" class="text-gray-700 hover:text-amber-500">Herramientas</a></li>
-        </ul>
-        
-        <!-- Mobile menu button -->
-        <button class="md:hidden p-2 hover:bg-gray-100 rounded-lg">
-          <span class="text-2xl">≡</span>
-        </button>
+
+        <div class="flex items-center gap-4">
+          <ul class="hidden md:flex gap-6 text-sm font-medium">
+            <li><a href="/" class="text-gray-700 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400">{translations.nav.home}</a></li>
+            <li><a href="/#subnichos" class="text-gray-700 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400">Subnichos</a></li>
+            <li><a href="/blog" class="text-gray-700 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400">{translations.nav.blog}</a></li>
+            <li><a href="/#calculadora" class="text-gray-700 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400">Herramientas</a></li>
+          </ul>
+
+          <!-- Selectores de tema e idioma -->
+          <div class="flex items-center gap-2">
+            <ThemeSelector currentLanguage={currentLanguage} className="hidden md:block" />
+            <LanguageSelector currentLanguage={currentLanguage} className="hidden md:block" />
+          </div>
+
+          <!-- Mobile menu button -->
+          <button class="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+            <span class="text-2xl">≡</span>
+          </button>
+        </div>
       </nav>
+
+      <!-- Mobile language and theme selectors -->
+      <div class="md:hidden container-solar pb-4">
+        <div class="flex gap-2">
+          <ThemeSelector currentLanguage={currentLanguage} className="flex-1" />
+          <LanguageSelector currentLanguage={currentLanguage} className="flex-1" />
+        </div>
+      </div>
     </header>
 
     <!-- Main content -->
@@ -129,48 +188,154 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <!-- Sobre el sitio -->
           <div>
-            <h3 class="font-bold text-lg mb-4 text-white">Sobre Nosotros</h3>
+            <h3 class="font-bold text-lg mb-4 text-white">{translations.footer.description.split('.')[0]}</h3>
             <p class="text-gray-400 text-sm">
-              Guías y herramientas para optimizar tu consumo de energía solar y construir un futuro sostenible.
+              {translations.footer.description}
             </p>
           </div>
-          
+
           <!-- Links principales -->
           <div>
-            <h3 class="font-bold text-lg mb-4">Recursos</h3>
+            <h3 class="font-bold text-lg mb-4">{translations.nav.blog}</h3>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li><a href="/" class="hover:text-amber-500">Inicio</a></li>
-              <li><a href="/blog" class="hover:text-amber-500">Blog</a></li>
-              <li><a href="/#calculadora" class="hover:text-amber-500">Calculadoras</a></li>
+              <li><a href="/" class="hover:text-amber-500">{translations.nav.home}</a></li>
+              <li><a href="/blog" class="hover:text-amber-500">{translations.nav.blog}</a></li>
+              <li><a href="/#calculadora" class="hover:text-amber-500">{translations.calculator.title}</a></li>
             </ul>
           </div>
-          
+
           <!-- Legal -->
           <div>
             <h3 class="font-bold text-lg mb-4">Legal</h3>
             <ul class="space-y-2 text-sm text-gray-400">
-              <li><a href="/privacidad" class="hover:text-amber-500">Política de Privacidad</a></li>
-              <li><a href="/terminos" class="hover:text-amber-500">Términos y Condiciones</a></li>
-              <li><a href="/politica-cookies" class="hover:text-amber-500">Política de Cookies</a></li>
+              <li><a href="/privacidad" class="hover:text-amber-500">{translations.nav.privacy}</a></li>
+              <li><a href="/terminos" class="hover:text-amber-500">{translations.nav.terms}</a></li>
+              <li><a href="/politica-cookies" class="hover:text-amber-500">{translations.nav.cookies}</a></li>
             </ul>
           </div>
-          
+
           <!-- Newsletter removed by request: show follow links instead -->
           <div>
             <h3 class="font-bold text-lg mb-4">Sigue nuestras guías</h3>
-            <p class="text-gray-400 text-sm">Encontrarás nuevas guías y herramientas en el <a href="/blog" class="underline hover:text-amber-300">blog</a> o en nuestro feed.</p>
+            <p class="text-gray-400 text-sm">Encontrarás nuevas guías y herramientas en el <a href="/blog" class="underline hover:text-amber-300">{translations.nav.blog.toLowerCase()}</a> o en nuestro feed.</p>
           </div>
         </div>
-        
+
         <!-- Copyright -->
         <div class="border-t border-gray-800 pt-8">
           <p class="text-center text-gray-400 text-sm">
-            © 2026 Sostenibilidad y Energía DIY. Todos los derechos reservados.
+            {translations.footer.copyright}
           </p>
         </div>
       </div>
     </footer>
-    <!-- Global image error handler: sustituye con un placeholder si falla la carga -->
+
+    <!-- Global initialization script for theme and language selectors -->
+    <script>
+      function getCookie(name) {
+        const value = ';' + document.cookie;
+        const parts = value.split('; ' + name + '=');
+        if (parts.length === 2) {
+          return parts.pop().split(';').shift();
+        }
+        return null;
+      }
+
+      function setCookieClient(name, value) {
+        const maxAge = 60 * 60 * 24 * 365;
+        document.cookie = name + '=' + value + '; path=/; max-age=' + maxAge + '; SameSite=Lax';
+      }
+
+      function applyTheme(theme) {
+        const html = document.documentElement;
+        if (theme === 'dark') {
+          html.classList.add('dark');
+        } else if (theme === 'light') {
+          html.classList.remove('dark');
+        } else if (theme === 'auto') {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (prefersDark) {
+            html.classList.add('dark');
+          } else {
+            html.classList.remove('dark');
+          }
+        }
+      }
+
+      // Initialize theme selector
+      function initThemeSelector() {
+        const selector = document.getElementById('theme-selector');
+        if (!selector) {
+          console.log('[Theme] Selector not found');
+          return;
+        }
+
+        const savedTheme = getCookie('sostenibilidad_theme') || 'light';
+        console.log('[Theme] Saved from cookie:', savedTheme);
+        selector.value = savedTheme;
+        console.log('[Theme] Selector value now:', selector.value);
+
+        selector.addEventListener('change', function(e) {
+          const newTheme = e.target.value;
+          console.log('[Theme] Changed to:', newTheme);
+          setCookieClient('sostenibilidad_theme', newTheme);
+          applyTheme(newTheme);
+          selector.style.opacity = '0.7';
+          setTimeout(() => {
+            selector.style.opacity = '1';
+          }, 200);
+        });
+      }
+
+      // Initialize language selector
+      function initLanguageSelector() {
+        const selector = document.getElementById('language-selector');
+        if (!selector) {
+          console.log('[Language] Selector not found');
+          return;
+        }
+
+        const savedLang = getCookie('sostenibilidad_lang') || 'es';
+        console.log('[Language] Saved from cookie:', savedLang);
+        selector.value = savedLang;
+        console.log('[Language] Selector value now:', selector.value);
+
+        selector.addEventListener('change', function(e) {
+          const newLang = e.target.value;
+          console.log('[Language] Changed to:', newLang);
+          setCookieClient('sostenibilidad_lang', newLang);
+          setTimeout(() => {
+            window.location.reload();
+          }, 200);
+        });
+      }
+
+      // Run on DOM ready
+      function initSelectors() {
+        console.log('[Init] Starting initialization...');
+        initThemeSelector();
+        initLanguageSelector();
+        console.log('[Init] Complete');
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSelectors);
+      } else {
+        initSelectors();
+      }
+
+      // Listen to system theme changes for 'auto' mode
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+          const currentTheme = getCookie('sostenibilidad_theme') || 'light';
+          if (currentTheme === 'auto') {
+            applyTheme('auto');
+          }
+        });
+      }
+    </script>
+
+    <!-- Global image error handler -->
     <script>
       document.addEventListener('error', function(e) {
         const t = e.target as HTMLImageElement | null;
