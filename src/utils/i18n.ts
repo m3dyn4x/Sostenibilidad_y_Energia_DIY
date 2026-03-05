@@ -86,10 +86,10 @@ const translations: Record<Language, TranslationKeys> = {
       terms: 'Términos'
     },
     home: {
-      title: 'Energía Solar DIY',
-      subtitle: 'Guías completas para instalar paneles solares',
-      description: 'Aprende a calcular, instalar y mantener sistemas solares de autoconsumo. Información actualizada sobre subsidios y ayudas disponibles.',
-      cta: 'Calcular Ahorro',
+      title: 'Energía Solar DIY | Paneles Solares Autoconsumo',
+      subtitle: 'Guías completas instalación paneles solares, calculadora fotovoltaica, subsidios 2026',
+      description: 'Aprende a calcular, instalar y mantener sistemas solares de autoconsumo. Información actualizada sobre subsidios IRPF, bonificación IBI y fondos Next Generation para energía renovable.',
+      cta: 'Calcular Ahorro Energía Solar',
       features: {
         title: '¿Qué encontrarás?',
         calculator: 'Calculadora precisa de ahorro energético',
@@ -144,10 +144,10 @@ const translations: Record<Language, TranslationKeys> = {
       terms: 'Terms'
     },
     home: {
-      title: 'Solar Energy DIY',
-      subtitle: 'Complete guides for solar panel installation',
-      description: 'Learn to calculate, install and maintain self-consumption solar systems. Updated information on available subsidies and grants.',
-      cta: 'Calculate Savings',
+      title: 'Solar Energy DIY | Solar Panels | Self-Consumption',
+      subtitle: 'Complete guides for solar panel installation, photovoltaic calculator, subsidies 2026',
+      description: 'Learn to calculate, install and maintain self-consumption solar systems. Updated information on IRPF tax deductions, IBI bonuses and Next Generation funds for renewable energy.',
+      cta: 'Calculate Solar Energy Savings',
       features: {
         title: 'What will you find?',
         calculator: 'Precise energy savings calculator',
