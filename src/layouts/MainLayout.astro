@@ -265,16 +265,5 @@ const ADSENSE_CLIENT = import.meta.env.PUBLIC_ADSENSE_CLIENT ?? null;
         initMobileMenu();
       }
     </script>
-
-    <!-- Global image error handler -->
-    <script>
-      document.addEventListener('error', function(e) {
-        const t = e.target as HTMLImageElement | null;
-        if (t && t.tagName === 'IMG' && !(t.dataset as any).fallback) {
-          (t.dataset as any).fallback = true;
-          t.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==';
-        }
-      }, true);
-    </script>
   </body>
 </html>
